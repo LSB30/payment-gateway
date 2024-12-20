@@ -37,7 +37,7 @@ export class TransactionEntity {
     entity.cvv = dto.cvv;
     entity.expirationDate = dto.expirationDate;
     entity.password = dto.password;
-    entity.marchantId = dto.merchantId;
+    entity.marchantId = dto.marchantId;
     entity.status = "PENDING";
     entity.validationResult = "Processing"
     return entity;

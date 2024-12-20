@@ -4,5 +4,5 @@ export class TransactionDto {
   cvv: string;
   amount: number;
   password: string;
-  merchantId: string;
+  marchantId: string;
 }

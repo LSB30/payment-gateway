@@ -1,13 +1,21 @@
-import { Repository } from "typeorm";
+import { AppDataSource } from "./../database/data-source";
 import { TransactionDto } from "../dto/transactionDto";
 import { TransactionEntity } from "../entities/transactionEntity";
 
 export class TransactionService {
-  constructor(private transactionRepository: Repository<TransactionEntity>) {}
+  private transactionRepository =
+    AppDataSource.getRepository(TransactionEntity);
 
-  async createTransaction(transactionDto: TransactionDto): Promise<void> {
+  async createTransaction(
+    transactionDto: TransactionDto
+  ): Promise<TransactionEntity> {
+    console.log("service");
     const transacation = TransactionEntity.fromDTO(transactionDto);
 
-    await this.transactionRepository.save(transacation);
+    console.log(transacation);
+    const entity = await this.transactionRepository.save(transacation);
+    console.log(entity);
+
+    return entity;
   }
 }
