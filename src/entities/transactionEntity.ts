@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { TransactionDto } from "../dto/transactionDto";
 
 @Entity({ name: "transactions_logs" })
 export class TransactionEntity {
@@ -28,4 +29,17 @@ export class TransactionEntity {
 
   @Column({ type: "varchar", length: 255 })
   validationResult: string;
+
+  static fromDTO(dto: TransactionDto): TransactionEntity {
+    const entity = new TransactionEntity();
+    entity.cardNumber = dto.cardNumber;
+    entity.amount = dto.amount;
+    entity.cvv = dto.cvv;
+    entity.expirationDate = dto.expirationDate;
+    entity.password = dto.password;
+    entity.marchantId = dto.merchantId;
+    entity.status = "PENDING";
+    entity.validationResult = "Processing"
+    return entity;
+  }
 }
