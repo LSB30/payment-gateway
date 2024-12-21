@@ -2,8 +2,9 @@ import { TransactionService } from "../services/transactionService";
 import { Request, Response, NextFunction } from "express";
 import { ApiResponse, transactionResponse } from "../types/apiResponse";
 import { ZodError } from "zod";
+
 export class TransactionController {
-  constructor(private transactionService: TransactionService) {}
+  constructor(private readonly transactionService: TransactionService) {}
 
   async createTransaction(
     req: Request,
@@ -13,7 +14,7 @@ export class TransactionController {
     try {
       const transaction = req.body;
 
-      console.log(transaction);
+      
       const result = await this.transactionService.createTransaction(
         transaction
       );
@@ -24,6 +25,8 @@ export class TransactionController {
         data: result,
       } as ApiResponse<transactionResponse>);
     } catch (error: unknown) {
+      console.error('Transaction error:', error);
+      
       if (error instanceof ZodError) {
         res.status(400).json({
           success: false,
@@ -32,6 +35,20 @@ export class TransactionController {
         });
         return;
       }
+
+      if (error instanceof Error && error.message === "Card number already registered") {
+        res.status(400).json({
+          success: false,
+          message: "Invalid card",
+        });
+        return;
+      }
+
+      res.status(500).json({
+        success: false,
+        message: "Payment processing failed",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   }
 }

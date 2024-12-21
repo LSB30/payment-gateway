@@ -9,13 +9,17 @@ export class TransactionService {
   async createTransaction(
     transactionDto: TransactionDto
   ): Promise<TransactionEntity> {
-    console.log("service");
-    const transacation = TransactionEntity.fromDTO(transactionDto);
+    // Check if card number already exists
+    const existingTransaction = await this.transactionRepository.findOne({
+      where: { cardNumber: transactionDto.cardNumber }
+    });
 
-    console.log(transacation);
-    const entity = await this.transactionRepository.save(transacation);
-    console.log(entity);
+    if (existingTransaction) {
+      throw new Error("Card number already registered");
+    }
 
+    const transaction = TransactionEntity.fromDTO(transactionDto);
+    const entity = await this.transactionRepository.save(transaction);
     return entity;
   }
 }

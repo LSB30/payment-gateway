@@ -1,18 +1,24 @@
 import express from "express";
-import { AppDataSource } from "./database/data-source";
+import { initializeDatabase } from "./database/data-source";
 import routes from "./routes";
 
-AppDataSource.initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!");
+const startServer = async () => {
+  try {
+    await initializeDatabase();
 
     const app = express();
+    app.use(express.json());
+
     routes(app);
 
-    console.log("HTTP server running:", process.env.PORT);
+    const port = process.env.PORT ?? 3000;
+    app.listen(port, () => {
+      console.log(`HTTP server running on port: ${port}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
 
-    return app.listen(process.env.PORT);
-  })
-  .catch((err) => {
-    console.error("Error during Data Source initialization", err);
-  });
+startServer();
