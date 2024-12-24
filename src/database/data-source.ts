@@ -14,7 +14,7 @@ const options: DataSourceOptions & SeederOptions = {
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   synchronize: false, // Disabled for safety in production
-  logging: process.env.NODE_ENV !== "production",
+  logging: false, //process.env.NODE_ENV !== "production",
   entities: [TransactionEntity],
   migrations: [`${__dirname}/migrations/*.{ts,js}`],
   // Connection pool configuration
@@ -28,10 +28,13 @@ const options: DataSourceOptions & SeederOptions = {
     // Number of connection retries
     max_retries: 3,
     // Delay between retries in milliseconds
-    retry_delay: 3000
+    retry_delay: 3000,
   },
   // SSL configuration for production
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 };
 
 export const AppDataSource = new DataSource(options);
@@ -49,7 +52,7 @@ export const initializeDatabase = async () => {
       console.log(`Failed to connect to database. Retries left: ${retries}`);
       console.error(error);
       // Wait for 5 seconds before retrying
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
   }
   throw new Error("Unable to connect to the database after multiple retries");
